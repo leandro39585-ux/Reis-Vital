@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#ffffff">
+<title>ReisVital</title>
+<link rel="manifest" href="manifest.json"><link rel="icon" href="icon.svg"><link rel="apple-touch-icon" href="apple-touch-icon.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="ReisVital"><meta name="apple-mobile-web-app-status-bar-style" content="default">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
+<style>
+:root{--bg:#fff;--surf:#fff;--ink:#0b3a7a;--mut:#4f78ad;--line:#d6e4f7;--acc:#0b63d6;--accS:#eaf3ff;--side:#fff;--amb:#5aa9ff;--srv:#12a05c;--bad:#d1342b;--sh:0 1px 2px rgba(10,18,32,.06),0 10px 30px rgba(10,18,32,.08);
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+*{box-sizing:border-box}html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 15px/1.5 Inter,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+main{max-width:1060px;margin:0 auto;padding:20px 16px 60px}
+.view{display:none}.view.on{display:block}
+h1{font-size:clamp(24px,4.5vw,32px);line-height:1.15;letter-spacing:-.03em;margin:4px 0 4px;font-weight:800}
+h2{font-size:17px;margin:26px 0 10px;font-weight:700}h3{margin:0;font-size:16px}
+.sub{color:var(--mut);margin:0 0 16px;max-width:60ch}
+.top{position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:12px;padding:10px 16px;background:var(--side);color:#fff}
+.burger{width:46px;height:46px;border:0;border-radius:13px;background:rgba(255,255,255,.12);display:grid;place-content:center;gap:5px;cursor:pointer}
+.burger i{display:block;width:22px;height:2.5px;border-radius:2px;background:#fff}
+.top b{font-weight:800;letter-spacing:-.02em;font-size:17px}.top small{margin-left:auto;opacity:.75;font-size:13px;font-weight:600}
+nav{position:fixed;z-index:40;top:0;bottom:0;left:0;width:min(300px,86vw);transform:translateX(-104%);transition:transform .25s;background:linear-gradient(180deg,var(--side),#0b3a7a);display:flex;flex-direction:column;gap:4px;padding:calc(22px + env(safe-area-inset-top,0px)) 14px 22px;overflow:auto;visibility:hidden}
+body.menu nav{transform:none;visibility:visible}
+.ov{position:fixed;inset:0;z-index:35;background:rgba(5,10,18,.6);opacity:0;pointer-events:none;transition:opacity .25s}
+body.menu .ov{opacity:1;pointer-events:auto}
+nav .logo{display:flex;align-items:center;gap:10px;color:#fff;font-weight:800;font-size:18px;margin:0 6px 20px;letter-spacing:-.02em}
+nav button{display:flex;align-items:center;gap:14px;border:0;background:none;color:#c5d6f0;font:inherit;font-size:15px;font-weight:600;padding:13px 14px;border-radius:12px;cursor:pointer;min-height:48px;text-align:left}
+nav button svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+nav button.on{background:rgba(255,255,255,.14);color:#fff;box-shadow:inset 3px 0 0 #34d399}
+@media(prefers-reduced-motion:reduce){nav,.ov{transition:none}}
+@media(min-width:900px){main{padding:32px 40px 60px}main>.view{max-width:1000px}}
+.btn,button.b{font:inherit;font-weight:600;border:1px solid var(--line);background:var(--surf);color:var(--ink);padding:12px 18px;border-radius:12px;cursor:pointer;min-height:48px;display:inline-flex;gap:8px;align-items:center;justify-content:center}
+.btn svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.pri{background:var(--acc);border-color:var(--acc);color:#fff}
+.sm{min-height:34px;padding:4px 12px;font-size:13px;border-radius:9px}
+:focus-visible{outline:3px solid var(--amb);outline-offset:2px}
+input[type=file]{display:none}
+.card{background:var(--surf);border:1px solid var(--line);border-radius:18px;padding:16px;box-shadow:var(--sh)}
+.scan{position:relative;display:flex;flex-direction:column;align-items:center;text-align:center;gap:14px;padding:34px 18px;border-radius:24px;background:linear-gradient(160deg,var(--side),#0b63d6);color:#fff;box-shadow:var(--sh);overflow:hidden}
+.scan.drag{outline:3px dashed var(--amb)}
+.vf{width:120px;height:120px;position:relative}
+.vf::before,.vf::after,.vf i::before,.vf i::after{content:"";position:absolute;width:30px;height:30px;border:4px solid #34d399}
+.vf::before{top:0;left:0;border-right:0;border-bottom:0;border-radius:10px 0 0 0}.vf::after{top:0;right:0;border-left:0;border-bottom:0;border-radius:0 10px 0 0}
+.vf i::before{bottom:0;left:0;border-right:0;border-top:0;border-radius:0 0 0 10px}.vf i::after{bottom:0;right:0;border-left:0;border-top:0;border-radius:0 0 10px 0}
+.vf svg{position:absolute;inset:30px;width:60px;height:60px;fill:none;stroke:#fff;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.scan h1{font-size:clamp(22px,4vw,30px)}.scan p{margin:0;opacity:.85;max-width:44ch}
+.scan .acts{display:flex;flex-wrap:wrap;gap:10px;justify-content:center}
+.scan .btn:not(.pri){background:rgba(255,255,255,.14);color:#fff;border-color:rgba(255,255,255,.3)}
+.scan .pri{background:#fff;border-color:#fff;color:#0a1628}
+.msg{min-height:22px;font-size:14px}.msg.err{color:#ffc7c2}
+.steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin-top:16px;counter-reset:s}
+.steps .card{counter-increment:s;display:flex;gap:12px;align-items:flex-start}
+.steps .card::before{content:counter(s);flex:none;width:30px;height:30px;border-radius:50%;background:var(--accS);color:var(--acc);display:grid;place-items:center;font-weight:800}
+.steps b{display:block}.steps span{color:var(--mut);font-size:13px}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px}
+.kpi{background:var(--surf);border:1px solid var(--line);border-radius:18px;padding:16px;box-shadow:var(--sh)}
+.kpi span{font-size:13px;color:var(--mut)}.kpi b{display:block;font-size:26px;letter-spacing:-.02em;font-weight:800}
+.kpi.main{background:var(--acc);border-color:var(--acc);color:#fff}.kpi.main span{color:#fff;opacity:.85}
+.desc{white-space:pre-wrap}
+.emp{display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px 16px;align-items:center}
+.emp+.emp{margin-top:10px}.emp small{color:var(--mut)}
+.avatar{width:38px;height:38px;border-radius:50%;background:var(--accS);color:var(--acc);display:grid;place-items:center;font-weight:800;flex:none}
+.sec{margin-top:22px}.sec>header{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:6px 14px;margin-bottom:10px}
+.sec>header>div{display:flex;gap:10px;align-items:center}.sec small{color:var(--mut)}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px}
+.item{display:flex;flex-direction:column;gap:9px}
+.top2{display:flex;justify-content:space-between;gap:10px}
+.route{font-size:13px;color:var(--mut)}.endt{font-size:26px;font-weight:800;text-align:right;line-height:1;letter-spacing:-.02em}
+.strip{display:flex;height:12px;border-radius:6px;overflow:hidden;gap:2px}.strip i{display:block;min-width:4px}
+.v{background:var(--acc)}.s{background:var(--srv)}.i{background:var(--amb)}
+.legend{display:flex;flex-wrap:wrap;gap:3px 12px;font-size:12px;color:var(--mut)}
+.legend em{font-style:normal;display:inline-flex;gap:5px;align-items:center}.legend em::before{content:"";width:9px;height:9px;border-radius:3px;background:var(--c)}
+.warn{color:var(--bad);font-size:13px}.note{font-size:13px;color:var(--mut)}
+.scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;border:1px solid var(--line);border-radius:18px;background:var(--surf);box-shadow:var(--sh)}
+table{border-collapse:collapse;width:100%;min-width:1000px;font-size:14px}
+th,td{padding:11px 12px;text-align:left;border-bottom:1px solid var(--line);vertical-align:top}th{background:var(--bg);white-space:nowrap;font-size:13px;color:var(--mut)}td.n{white-space:nowrap}
+.empty{text-align:center;padding:44px 16px}.empty p{color:var(--mut);margin:6px 0 16px}
+.cfg{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
+label{display:flex;flex-direction:column;gap:5px;font-size:13px;color:var(--mut);font-weight:500}
+input,select{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:11px;padding:10px 12px;min-height:46px;width:100%}
+.busy{position:fixed;inset:0;z-index:30;background:rgba(10,14,36,.72);display:none;flex-direction:column;gap:14px;align-items:center;justify-content:center;color:#fff;font-weight:600}
+.busy.on{display:flex}.spin{width:46px;height:46px;border:5px solid rgba(255,255,255,.25);border-top-color:var(--amb);border-radius:50%;animation:sp 1s linear infinite}
+@keyframes sp{to{transform:rotate(360deg)}}@media(prefers-reduced-motion:reduce){.spin{animation-duration:3s}}
+dialog{border:1px solid var(--line);border-radius:20px;background:var(--surf);color:var(--ink);width:min(560px,94vw);padding:20px}dialog::backdrop{background:rgba(0,0,0,.55)}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px}.w{grid-column:1/-1}
+.row{display:flex;justify-content:space-between;gap:8px;margin-top:16px}
+@media(max-width:560px){.g2{grid-template-columns:1fr}.cards{grid-template-columns:1fr}}
+@media print{.top,.ov,nav,.scan,.busy,button{display:none!important}main{margin:0;padding:0}.view{display:block!important}}
+.scan{background:radial-gradient(120% 90% at 100% 0%,rgba(52,211,153,.35),transparent 55%),linear-gradient(150deg,#0a1628 0%,#0b3a7a 55%,#0b63d6 100%);padding:clamp(24px,5vw,44px);gap:16px;align-items:flex-start;text-align:left}
+.pill{background:rgba(52,211,153,.18);color:#6ee7b7;border:1px solid rgba(52,211,153,.4);padding:5px 12px;border-radius:99px;font-size:12px;font-weight:700;letter-spacing:.04em;text-transform:uppercase}
+.scan h1{font-size:clamp(26px,5.5vw,42px);margin:0}.scan p{max-width:52ch}
+.drop{width:100%;display:flex;flex-direction:column;align-items:center;text-align:center;gap:10px;padding:26px 16px;border:2px dashed rgba(255,255,255,.35);border-radius:20px;background:rgba(255,255,255,.06)}
+.drop b{font-size:17px}.drop>span{opacity:.75;font-size:13px}.scan.drag .drop{border-color:#34d399;background:rgba(52,211,153,.14)}
+.vf{width:84px;height:84px}.vf svg{inset:22px;width:40px;height:40px}.vf::before,.vf::after,.vf i::before,.vf i::after{width:22px;height:22px}
+.feat{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px;margin-top:16px}.feat .card{display:flex;gap:12px;align-items:center}
+.ico{flex:none;width:46px;height:46px;border-radius:14px;display:grid;place-items:center;background:var(--accS);color:var(--acc)}.ico.g{background:rgba(18,160,92,.15);color:var(--srv)}
+.ico svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}.feat b{display:block}.feat span{font-size:13px;color:var(--mut)}
+
+body{background:#fff;color:var(--ink)}
+.top{background:#fff;color:var(--ink);border-bottom:1px solid var(--line)}.top #hl{display:flex}
+.burger{background:var(--accS)}.burger i{background:var(--acc)}
+nav{background:#fff;box-shadow:var(--sh)}nav .logo{color:var(--ink)}nav button{color:var(--ink)}nav button.on{background:var(--accS);color:var(--acc)}
+.scan{background:linear-gradient(180deg,#fff,#eaf3ff);color:var(--ink);border:1px solid var(--line);box-shadow:var(--sh);align-items:center;text-align:center}
+.scan h1{color:var(--ink)}.scan p{color:var(--mut)}.drop{border-color:#9cc3f2;background:#fff}.drop b{color:var(--ink)}.drop>span{color:var(--mut);opacity:1}
+.scan .btn:not(.pri){background:#fff;color:var(--acc);border-color:var(--line)}.scan .pri{background:var(--acc);border-color:var(--acc);color:#fff}
+.vf{color:var(--acc)}.vf svg{stroke:var(--acc)}.scan.drag .drop{background:#eaf3ff;border-color:var(--acc)}
+#auth{position:fixed;inset:0;z-index:100;background:linear-gradient(180deg,#fff,#eaf3ff);display:none;overflow:auto;padding:24px 16px}
+body.noauth #auth{display:grid;place-items:center}body.noauth main,body.noauth .top,body.noauth nav,body.noauth .ov{display:none}
+.acard{width:min(420px,100%);background:#fff;border:1px solid var(--line);border-radius:24px;box-shadow:var(--sh);padding:28px 22px}
+.alogo{display:flex;flex-direction:column;align-items:center;gap:6px;margin-bottom:20px;text-align:center}.alogo b{font-size:26px;letter-spacing:-.03em}.alogo small{color:var(--mut)}
+.atabs{display:grid;grid-template-columns:1fr 1fr;gap:6px;background:var(--accS);padding:5px;border-radius:14px;margin-bottom:18px}
+.atabs button{border:0;background:none;color:var(--acc);font:inherit;font-weight:700;padding:11px;border-radius:10px;cursor:pointer}.atabs button.on{background:#fff;box-shadow:var(--sh)}
+.af{display:none;flex-direction:column;gap:12px}.af.on{display:flex}.af label{display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:600}
+.af input{width:100%;padding:13px 14px;border:1px solid var(--line);border-radius:12px;font:inherit;font-size:16px;color:var(--ink);background:#fff}.af input:focus{outline:2px solid var(--acc);border-color:var(--acc)}
+.af a{color:var(--acc);font-weight:600;font-size:14px;text-align:center;text-decoration:none}.af p{color:var(--mut);font-size:14px;margin:0}
+.code{font:700 22px/1.2 ui-monospace,Menlo,Consolas,monospace;letter-spacing:.06em;text-align:center;padding:18px 10px;border-radius:14px;background:var(--accS);color:var(--acc);user-select:all}
+.am{min-height:20px;font-size:14px;color:var(--bad);margin:12px 0 0;font-weight:600;text-align:center}.am.ok{color:var(--srv)}
+
+@keyframes vin{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+@keyframes rv{from{opacity:0;transform:translateY(22px) scale(.97)}to{opacity:1;transform:none}}
+@keyframes fl{0%,100%{transform:translateY(0)}50%{transform:translateY(-9px)}}
+@keyframes pr{0%{box-shadow:0 0 0 0 rgba(11,99,214,.5)}100%{box-shadow:0 0 0 18px rgba(11,99,214,0)}}
+@keyframes sh{from{background-position:-200% 0}to{background-position:200% 0}}
+@keyframes ecg{0%{stroke-dashoffset:200}60%,100%{stroke-dashoffset:0}}
+@keyframes bl{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(50px,-40px) scale(1.2)}}
+@keyframes slin{from{opacity:0;transform:translateX(-24px)}to{opacity:1;transform:none}}
+@keyframes pop{from{opacity:0;transform:scale(.92) translateY(22px)}to{opacity:1;transform:none}}
+@keyframes grad{0%{background-position:0 50%}50%{background-position:100% 50%}100%{background-position:0 50%}}
+@keyframes rp{to{transform:scale(2.6);opacity:0}}
+.view.on{animation:vin .45s cubic-bezier(.2,.8,.2,1)}
+.rv{animation:rv .55s cubic-bezier(.2,.8,.2,1) backwards}
+.card,.kpi{transition:transform .25s,box-shadow .25s}.card:hover,.kpi:hover{transform:translateY(-4px);box-shadow:0 16px 36px rgba(11,58,122,.2)}
+.btn,.atabs button,nav button{position:relative;overflow:hidden;transition:transform .15s,background .2s,box-shadow .2s}.btn:hover{transform:translateY(-2px)}.btn:active{transform:scale(.96)}
+.rip{position:absolute;border-radius:50%;background:rgba(11,99,214,.28);transform:scale(0);animation:rp .6s ease-out forwards;pointer-events:none}.pri .rip{background:rgba(255,255,255,.5)}
+.btn.pri,.scan .pri{background-image:linear-gradient(110deg,transparent 30%,rgba(255,255,255,.4) 50%,transparent 70%);background-size:200% 100%;animation:sh 3.5s linear infinite}
+.scan .pri{animation:pr 2s infinite,sh 3.5s linear infinite}
+.scan{background:linear-gradient(120deg,#fff,#eaf3ff,#e6fbf1,#eaf3ff,#fff);background-size:300% 300%;animation:grad 12s ease infinite,rv .6s backwards}
+.vf{animation:fl 3.2s ease-in-out infinite}
+.ecg{stroke-dasharray:200;animation:ecg 3s ease-in-out infinite}
+.alogo svg{animation:fl 4s ease-in-out infinite;filter:drop-shadow(0 12px 18px rgba(11,99,214,.35))}
+.acard{animation:pop .6s cubic-bezier(.2,.8,.2,1)}.af.on{animation:vin .35s}
+#auth::before,#auth::after{content:"";position:fixed;border-radius:50%;filter:blur(60px);opacity:.45;z-index:-1}
+#auth::before{width:340px;height:340px;background:#0b63d6;top:-90px;left:-90px;animation:bl 9s ease-in-out infinite}
+#auth::after{width:320px;height:320px;background:#12c97a;bottom:-90px;right:-70px;animation:bl 11s ease-in-out infinite reverse}
+.burger{background:#0a0f1a}.burger i{background:#fff;transition:transform .3s,opacity .2s}
+body.menu .burger i:nth-child(1){transform:translateY(7.5px) rotate(45deg)}body.menu .burger i:nth-child(2){opacity:0}body.menu .burger i:nth-child(3){transform:translateY(-7.5px) rotate(-45deg)}
+.ov{backdrop-filter:blur(3px)}
+body.menu nav button{animation:slin .4s backwards}
+body.menu nav button:nth-of-type(1){animation-delay:.08s}body.menu nav button:nth-of-type(2){animation-delay:.14s}body.menu nav button:nth-of-type(3){animation-delay:.2s}body.menu nav button:nth-of-type(4){animation-delay:.26s}body.menu nav button:nth-of-type(5){animation-delay:.32s}body.menu nav button:nth-of-type(6){animation-delay:.38s}
+nav button:hover{background:var(--accS);transform:translateX(4px)}
+.top{border-bottom:3px solid #0a0f1a}
+nav .logo{background:#0a0f1a;color:#fff;margin:calc(-22px - env(safe-area-inset-top,0px)) -14px 18px;padding:calc(22px + env(safe-area-inset-top,0px)) 20px 20px}
+nav button.on{box-shadow:inset 4px 0 0 #0a0f1a}
+.kpi.main{background:linear-gradient(135deg,#0a0f1a,#12306b);border-color:#0a0f1a}
+th{background:#0a0f1a;color:#fff}
+.view h2{display:flex;align-items:center;gap:10px}.view h2::before{content:"";width:5px;height:20px;border-radius:3px;background:#0a0f1a}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body class="noauth">
+<div id="auth"><div class="acard">
+ <div class="alogo"><span id="alogo"></span><b>ReisVital</b><small>Gestão de serviços de transporte</small></div>
+ <div class="atabs" id="aTabs"><button data-tab="in" class="on">Entrar</button><button data-tab="up">Criar conta</button></div>
+ <form class="af on" data-f="in" id="fIn"><label>Email<input name="e" type="email" autocomplete="username" required></label><label>Senha<input name="p" type="password" autocomplete="current-password" required></label><button class="btn pri" type="submit">Entrar</button><a href="#" data-tab="rec">Esqueci-me da senha</a></form>
+ <form class="af" data-f="up" id="fUp"><label>Nome<input name="n" autocomplete="name" required></label><label>Email<input name="e" type="email" autocomplete="username" required></label><label>Senha (mín. 8 caracteres)<input name="p" type="password" minlength="8" autocomplete="new-password" required></label><label>Confirmar senha<input name="q" type="password" minlength="8" autocomplete="new-password" required></label><button class="btn pri" type="submit">Criar conta</button></form>
+ <form class="af" data-f="rec" id="fRec"><b>Recuperar senha</b><label>Email<input name="e" type="email" required></label><label>Chave de recuperação<input name="c" placeholder="RR-XXXX-XXXX-XXXX" autocapitalize="characters" required></label><label>Nova senha (mín. 8)<input name="p" type="password" minlength="8" autocomplete="new-password" required></label><button class="btn pri" type="submit">Definir nova senha</button><a href="#" data-tab="in">Voltar a entrar</a></form>
+ <div class="af" data-f="code" id="aCode"><b>Guarde a sua chave de recuperação</b><div class="code" id="codeV"></div><p>É a única forma de recuperar a senha. Só é mostrada agora; guarde-a num local seguro.</p><button class="btn" id="codeCopy" type="button">Copiar</button><button class="btn pri" id="codeOk" type="button">Já guardei, continuar</button></div>
+ <p class="am" id="aMsg" role="alert"></p>
+</div></div>
+<header class="top"><button class="burger" id="burger" aria-label="Abrir menu" aria-expanded="false"><i></i><i></i><i></i></button><span id="hl"></span><b>ReisVital</b><small id="ttl"></small></header><div class="ov" id="ov"></div>
+<nav id="nav" aria-label="Secções"></nav>
+<main>
+<section class="view on" id="v-home">
+  <div class="scan" id="scan">
+    <h1>Folha de serviços</h1>
+    <p>Carregue a folha e veja os KM e o tempo de cada serviço.</p>
+    <div class="drop"><div class="vf"><i></i><svg viewBox="0 0 24 24"><path d="M6 3h9l4 4v14H6zM14 3v5h5M9 13h7M9 17h7"/></svg></div><b>Arraste a folha para aqui</b><span>ou escolha uma opção</span>
+    <div class="acts"><label class="btn pri" for="cam" tabindex="0"><svg viewBox="0 0 24 24"><path d="M4 8h3l2-3h6l2 3h3v11H4zM12 17a4 4 0 100-8 4 4 0 000 8z"/></svg>Tirar foto</label>
+    <label class="btn" for="up" tabindex="0"><svg viewBox="0 0 24 24"><path d="M4 5h16v14H4zM4 16l5-5 4 4 3-3 4 4"/></svg>Escolher imagem</label>
+    <label class="btn" for="xl" tabindex="0"><svg viewBox="0 0 24 24"><path d="M4 3h16v18H4zM4 9h16M4 15h16M10 3v18"/></svg>Excel / CSV</label></div></div>
+    <input id="cam" type="file" accept="image/*" capture="environment"><input id="up" type="file" accept="image/jpeg,image/png,image/webp"><input id="xl" type="file" accept=".csv,.xlsx,.xls">
+    <div id="msg" class="msg" role="status" aria-live="polite"></div>
+  </div>
+  <div id="last"></div>
+  </section>
+<section class="view" id="v-sum"><h1>Resumo</h1><p class="sub">Totais previstos do dia e por funcionário.</p><div id="sumC"></div></section>
+<section class="view" id="v-svc"><h1>Serviços</h1><p class="sub">Cada serviço por funcionário, em ordem cronológica.</p><div id="svcC"></div></section>
+<section class="view" id="v-map"><h1>Mapa</h1><p class="sub">Escolha um serviço para ver a rota no Google Maps, com KM e tempo.</p><div class="card"><label>Serviço<select id="mapSel"></select></label></div><div class="card" id="mapBox" style="height:min(60vh,520px);margin-top:12px;padding:0;overflow:hidden"></div><p class="note" id="mapInfo"></p></section>
+<section class="view" id="v-tab"><h1>Tabela</h1><p class="sub">Todos os serviços numa só tabela.</p><div id="tabC"></div></section>
+<section class="view" id="v-set"><h1>Definições</h1><p class="sub">Parâmetros de cálculo, chaves de API e exportação.</p>
+  <h2>Cálculo</h2><div class="card cfg">
+    <label>Tipo de percurso<select id="perfil"><option value="urbano">Urbano</option><option value="misto" selected>Misto</option><option value="estrada">Estrada</option></select></label>
+    <label>Velocidade média (km/h)<input id="speed" type="number" min="5" max="130" value="40"></label>
+    <label>Fator de estrada<input id="fator" type="number" step="0.05" min="1" max="2" value="1.3"></label>
+    <label>Duração do serviço<select id="modo"><option value="min">Mínima (X)</option><option value="media" selected>Média</option><option value="max">Máxima (Z)</option></select></label></div>
+  <h2>Chaves de API</h2><form class="card" id="fset"><div class="cfg">
+    <label>Chave Anthropic (leitura da foto)<input name="ak" type="password" autocomplete="off" placeholder="sk-ant-…"></label>
+    <label>Chave Google Maps (KM e tempo reais)<input name="gk" type="password" autocomplete="off" placeholder="AIza…"></label>
+    <label>Chave OpenRouteService (alternativa)<input name="ok" type="password" autocomplete="off"></label></div>
+    <p class="note">As chaves ficam apenas neste dispositivo. Google Maps: no Google Cloud ative <b>Routes API</b>, <b>Maps JavaScript API</b> e <b>Directions API</b>, crie uma chave e restrinja-a ao seu domínio. Sem chave Google, os KM são estimados e o mapa fica indisponível. Excel/CSV com colunas reconhecíveis não precisam da chave Anthropic.</p>
+    <button class="btn pri" type="submit">Guardar chaves</button></form>
+  <h2>Aplicação</h2><div class="card emp"><div><b>Instalar no dispositivo</b><br><small>PC, Android, iPhone/iPad (Partilhar → Adicionar ao ecrã principal).</small></div><button class="btn pri sm" id="bInst" style="display:none">Instalar</button></div>
+  <h2>Conta</h2><div class="card emp"><div><b id="uName"></b><br><small id="uMail"></small></div><button class="btn sm" id="bOut">Terminar sessão</button></div>
+  <h2>Dados</h2><div class="acts" style="display:flex;gap:10px;flex-wrap:wrap"><button class="btn" id="bCsv">Exportar CSV</button><button class="btn" id="bPrint">Imprimir</button><button class="btn" id="bClr">Apagar folha atual</button></div>
+</section>
+</main>
+<div class="busy" id="busy" role="alert"><div class="spin"></div>A ler a folha…</div>
+<dialog id="dlg"><form method="dialog" id="frm"><h3>Corrigir serviço</h3><p class="note">Corrija o que a foto não deixou ler bem.</p><div class="g2">
+<label>Funcionário<input name="func" required></label><label>Cliente<input name="cliente"></label>
+<label class="w">Serviço<input name="servico"></label>
+<label>Hora de início<input name="inicio" type="time" required></label><label>Intervalo (Y min)<input name="intervalo" type="number" min="0"></label>
+<label>Duração mínima (X)<input name="dmin" type="number" min="0"></label><label>Duração máxima (Z)<input name="dmax" type="number" min="0"></label>
+<label class="w">Morada de início<input name="orig"></label><label class="w">Morada de chegada<input name="dest"></label>
+<label class="w">KM manuais (vazio = automático)<input name="km" type="number" step="0.1" min="0"></label></div>
+<div class="row"><button type="button" id="del" class="btn sm">Apagar</button><span><button type="button" id="cancel" class="btn sm">Cancelar</button> <button class="btn pri sm" value="ok">Guardar</button></span></div></form></dialog>
+<script>
+/* ===================== CONFIGURAÇÃO ===================== */
+const CONFIG={
+  ANTHROPIC_KEY:"",  /* >>> CHAVE DE VISÃO/IA (leitura da foto) – ou em Definições */
+  GOOGLE_KEY:"",     /* >>> CHAVE GOOGLE MAPS (Routes API): KM e tempo de viagem reais – ou em Definições */
+  ORS_KEY:"",        /* >>> CHAVE DE ROTAS alternativa (KM e tempo reais, OpenRouteService) – ou em Definições */
+  VISION_MODEL:"claude-sonnet-5-5"
+};
+const $=s=>document.querySelector(s);
+const esc=t=>String(t??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const norm=t=>String(t||"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase();
+const toMin=h=>{const m=/(\d{1,2})[:h.](\d{2})/.exec(h||"");return m?+m[1]*60+ +m[2]:0};
+const fmt=m=>{m=Math.round(m);const d=Math.floor(m/1440);m=((m%1440)+1440)%1440;return String(Math.floor(m/60)).padStart(2,"0")+":"+String(m%60).padStart(2,"0")+(d?" (+"+d+")":"")};
+const dur=m=>{m=Math.round(m);return m<60?m+" min":Math.floor(m/60)+" h "+String(m%60).padStart(2,"0")+" min"};
+const num=v=>{const n=parseFloat(v);return isFinite(n)?n:0};
+const U={p:""};const store={get:k=>{try{return JSON.parse(localStorage.getItem(U.p+k))}catch(e){return null}},set:(k,v)=>{try{localStorage.setItem(U.p+k,JSON.stringify(v))}catch(e){}}};
+const LOGO=s=>`<svg width="${s}" height="${s}" viewBox="0 0 128 128" aria-hidden="true"><defs><linearGradient id="lg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#0a0f1a"/><stop offset="1" stop-color="#0a4aa8"/></linearGradient></defs><rect width="128" height="128" rx="30" fill="url(#lg)"/><path d="M28 20l18 11 18-17 18 17 18-11v42c0 22-16 36-36 48-20-12-36-26-36-48z" fill="#fff"/><path d="M58 44h12v14h14v12H70v14H58V70H44V58h14z" fill="#0b63d6"/><path class="ecg" d="M18 64h26l8-14 8 30 8-24 6 8h36" fill="none" stroke="#12c97a" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+const keys=()=>Object.assign({ak:CONFIG.ANTHROPIC_KEY,ok:CONFIG.ORS_KEY,gk:CONFIG.GOOGLE_KEY},store.get("fs_keys")||{});
+
+/* ===================== GEOCODIFICAÇÃO E ROTAS ===================== */
+const PLACES=[["rua augusta",38.7107,-9.1394],["baixa",38.7107,-9.1394],["liberdade",38.72,-9.145],["santa maria",38.749,-9.161],["parque das nacoes",38.7678,-9.099],["oriente",38.7678,-9.099],["belem",38.6976,-9.2066],["cascais",38.6979,-9.4215],["oeiras",38.691,-9.311],["amadora",38.754,-9.23],["almada",38.679,-9.1569],["sintra",38.797,-9.388],["loures",38.83,-9.168],["odivelas",38.793,-9.183],["aeroporto",38.7742,-9.1342],["campo grande",38.76,-9.157],["alvalade",38.753,-9.145],["setubal",38.5244,-8.8882],["porto",41.1579,-8.6291],["braga",41.5454,-8.4265],["coimbra",40.2033,-8.4103],["faro",37.0194,-7.9304],["lisboa",38.7223,-9.1393]];
+function geocode(a){const n=norm(a);let b=null;for(const p of PLACES)if(n.includes(p[0])&&(!b||p[0].length>b[0].length))b=p;return b?[b[1],b[2]]:null}
+function hav(a,b){const r=x=>x*Math.PI/180,dl=r(b[0]-a[0]),dn=r(b[1]-a[1]);const h=Math.sin(dl/2)**2+Math.cos(r(a[0]))*Math.cos(r(b[0]))*Math.sin(dn/2)**2;return 12742*Math.asin(Math.sqrt(h))}
+/* >>> LÓGICA/API DE KM E TEMPO ENTRE MORADAS (Google Maps – Routes API, aceita moradas em texto) */
+async function googleRoute(o,d,hora){const dt=new Date(),m=/(\d+):(\d+)/.exec(hora||"");if(m)dt.setHours(+m[1],+m[2],0,0);if(dt<new Date())dt.setDate(dt.getDate()+1);
+  const r=await fetch("https://routes.googleapis.com/directions/v2:computeRoutes",{method:"POST",headers:{"Content-Type":"application/json","X-Goog-Api-Key":keys().gk,"X-Goog-FieldMask":"routes.distanceMeters,routes.duration"},
+    body:JSON.stringify({origin:{address:o},destination:{address:d},travelMode:"DRIVE",routingPreference:"TRAFFIC_AWARE",departureTime:dt.toISOString(),languageCode:"pt-PT",regionCode:"PT"})});
+  const j=await r.json();if(!r.ok||!j.routes?.length)throw new Error(j.error?.message||"Rota não encontrada");
+  return{km:j.routes[0].distanceMeters/1000,min:parseFloat(j.routes[0].duration)/60,src:"Google Maps"}}
+/* Alternativa: OpenRouteService (geocodificação + rota) */
+async function orsRoute(o,d){const K=keys().ok;
+  const g=async q=>{const j=await(await fetch("https://api.openrouteservice.org/geocode/search?api_key="+K+"&boundary.country=PT&size=1&text="+encodeURIComponent(q))).json();return j.features[0].geometry.coordinates};
+  const [a,b]=await Promise.all([g(o),g(d)]);
+  const j=await(await fetch("https://api.openrouteservice.org/v2/directions/driving-car",{method:"POST",headers:{"Content-Type":"application/json",Authorization:K},body:JSON.stringify({coordinates:[a,b]})})).json();
+  const s=j.routes[0].summary;return{km:s.distance/1000,min:s.duration/60}}
+
+/* ===================== LEITURA DA FOTO (VISÃO / IA) ===================== */
+const PROMPT=`Lê esta fotografia de uma folha de serviço (português de Portugal). Responde APENAS com JSON, sem texto extra:
+{"descricao":"descrição clara e completa: quem é o colaborador, para quem é cada serviço, o que fazer, hora de início, durações (X a Z min), intervalos (Y min), moradas de início e chegada","servicos":[{"funcionario":"","cliente":"","servico":"","inicio":"HH:MM","duracaoMin":0,"duracaoMax":0,"intervalo":0,"origem":"","destino":""}]}
+Não inventes KM nem tempos de deslocação. Campo ilegível: vazio ou 0.`;
+async function shrink(file){const img=await createImageBitmap(file),k=Math.min(1,1600/Math.max(img.width,img.height));
+  const c=document.createElement("canvas");c.width=img.width*k;c.height=img.height*k;c.getContext("2d").drawImage(img,0,0,c.width,c.height);
+  return new Promise(r=>c.toBlob(r,"image/jpeg",.85))}
+const parse=t=>JSON.parse(t.slice(t.indexOf("{"),t.lastIndexOf("}")+1));
+/* >>> CHAVE DE VISÃO/IA: usada aqui. Dentro do Claude usa o próprio Claude; fora, a chave Anthropic. */
+async function readSheet(file){const blob=await shrink(file);
+  const sm=window.claude?await window.claude.use("sample"):null;
+  if(sm&&(await sm.limits()).images){return parse((await sm(PROMPT,{images:[blob],cache:false,modelTier:"complex"})).text)}
+  const K=keys().ak;if(!K)throw new Error("Falta a chave de API. Abra Definições e indique a chave Anthropic.");
+  const b64=await new Promise(r=>{const f=new FileReader();f.onload=()=>r(f.result.split(",")[1]);f.readAsDataURL(blob)});
+  const r=await fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:{"content-type":"application/json","x-api-key":K,"anthropic-version":"2023-06-01","anthropic-dangerous-direct-browser-access":"true"},
+    body:JSON.stringify({model:CONFIG.VISION_MODEL,max_tokens:2500,messages:[{role:"user",content:[{type:"image",source:{type:"base64",media_type:"image/jpeg",data:b64}},{type:"text",text:PROMPT}]}]})});
+  const j=await r.json();if(!r.ok)throw new Error(j.error?.message||"Erro na API de visão.");
+  return parse(j.content.map(c=>c.text||"").join(""))}
+
+/* ===================== ESTADO E CÁLCULO ===================== */
+const S={desc:"",rows:[],api:{},ed:null,last:[]};
+const SPEEDS={urbano:25,misto:40,estrada:65};
+const mk=o=>Object.assign({id:Math.random().toString(36).slice(2),func:"",cliente:"",servico:"",inicio:"09:00",dmin:30,dmax:30,intervalo:0,orig:"",dest:"",km:null},o);
+function calc(r){const api=S.api[r.orig+"|"+r.dest];let km=null,v=null,f="";
+  if(r.km!==null&&r.km!==""){km=num(r.km);f="manual"}else if(api){km=api.km;v=api.min;f=api.src||"rota real"}
+  else{const a=geocode(r.orig),b=geocode(r.dest);if(a&&b){km=hav(a,b)*num($("#fator").value||1.3);f="estimado"}}
+  if(km===null)return{falta:true,fim:toMin(r.inicio)};
+  if(v===null)v=km/Math.max(5,num($("#speed").value))*60;
+  const m=$("#modo").value,s=m==="min"?num(r.dmin):m==="max"?num(r.dmax):(num(r.dmin)+num(r.dmax))/2;
+  const t=Math.round(v)+s+num(r.intervalo);return{km,viag:Math.round(v),serv:s,total:t,fim:toMin(r.inicio)+t,f}}
+async function fetchRoutes(){const K=keys();if(!K.gk&&!K.ok)return;
+  for(const r of S.rows){const k=r.orig+"|"+r.dest;if(S.api[k]||(r.km!==null&&r.km!==""))continue;try{S.api[k]=K.gk?await googleRoute(r.orig,r.dest,r.inicio):await orsRoute(r.orig,r.dest)}catch(e){S.apiErr=e.message}}}
+
+/* ===================== NAVEGAÇÃO ===================== */
+const IC={home:"M3 11l9-8 9 8v10h-6v-6H9v6H3z",sum:"M5 20V10M12 20V4M19 20v-7",svc:"M4 6h16M4 12h16M4 18h10",map:"M12 21s-7-6-7-11a7 7 0 0114 0c0 5-7 11-7 11zM12 12a2 2 0 100-4 2 2 0 000 4z",tab:"M3 5h18v14H3zM3 10h18M9 5v14",set:"M12 15a3 3 0 100-6 3 3 0 000 6zM12 3v3M12 18v3M3 12h3M18 12h3"};
+const NAV=[["home","Início"],["sum","Resumo"],["svc","Serviços"],["map","Mapa"],["tab","Tabela"],["set","Definições"]];
+$("#nav").innerHTML=`<div class="logo">${LOGO(34)}ReisVital</div>`+NAV.map(n=>`<button data-v="${n[0]}"><svg viewBox="0 0 24 24"><path d="${IC[n[0]]}"/></svg>${n[1]}</button>`).join("");
+function go(v){document.querySelectorAll(".view").forEach(e=>e.classList.toggle("on",e.id==="v-"+v));document.querySelectorAll("nav button").forEach(b=>b.classList.toggle("on",b.dataset.v===v));scrollTo(0,0);document.body.classList.remove("menu");$("#burger").setAttribute("aria-expanded","false");$("#ttl").textContent=(NAV.find(n=>n[0]===v)||[])[1]||"";stg($("#v-"+v));if(v==="map")drawMap()}
+const tg=o=>{document.body.classList.toggle("menu",o);$("#burger").setAttribute("aria-expanded",o)};$("#burger").onclick=()=>tg(!document.body.classList.contains("menu"));$("#ov").onclick=()=>tg(false);addEventListener("keydown",e=>{if(e.key==="Escape")tg(false)});
+$("#nav").onclick=e=>{const b=e.target.closest("button");if(b)go(b.dataset.v)};
+document.addEventListener("click",e=>{const b=e.target.closest("[data-e]");if(b)edit(S.rows.find(r=>r.id===b.dataset.e));const g=e.target.closest("[data-go]");if(g)go(g.dataset.go)});
+
+/* ===================== RENDER ===================== */
+const EMPTY=`<div class="card empty"><h3>Ainda não há nenhuma folha</h3><p>Adicione a foto de uma folha de serviço para ver aqui os resultados.</p><button class="btn pri" data-go="home">Adicionar foto</button></div>`;
+function saveCfg(){store.set("fs_cfg",{perfil:$("#perfil").value,speed:$("#speed").value,fator:$("#fator").value,modo:$("#modo").value})}
+function render(){store.set("fs_data",{desc:S.desc,rows:S.rows});saveCfg();
+  if(!S.rows.length){$("#sumC").innerHTML=$("#svcC").innerHTML=$("#tabC").innerHTML=EMPTY;$("#last").innerHTML="";S.last=[];return}
+  const rows=[...S.rows].sort((a,b)=>a.func.localeCompare(b.func)||toMin(a.inicio)-toMin(b.inicio));
+  const C=new Map(rows.map(r=>[r.id,calc(r)])),G={};rows.forEach(r=>(G[r.func||"Sem nome"]??=[]).push(r));
+  const sum=l=>{let km=0,v=0,s=0,i=0,fim=0,ini=1e9,miss=0;l.forEach(r=>{const c=C.get(r.id);if(c.falta){miss++;return}km+=c.km;v+=c.viag;s+=c.serv;i+=num(r.intervalo);fim=Math.max(fim,c.fim);ini=Math.min(ini,toMin(r.inicio))});return{km,v,s,i,fim,miss,turno:fim?fim-ini:0}};
+  const g=sum(rows);
+  $("#last").innerHTML=`<div class="card emp" style="margin-top:16px"><div><b>Última folha lida</b><br><small>${rows.length} serviço(s) · ${Object.keys(G).length} funcionário(s) · ${g.km.toFixed(1)} km · fim previsto ${g.fim?fmt(g.fim):"–"}</small></div><button class="btn pri sm" data-go="sum">Ver resumo</button></div>`;
+  $("#sumC").innerHTML=`<div class="kpis">`+[["KM previstos no dia",g.km.toFixed(1)+" km","main"],["Tempo em deslocações",dur(g.v)],["Tempo em serviços",dur(g.s)],["Tempo em intervalos",dur(g.i)],["Duração do turno",dur(g.turno)],["Hora final prevista",g.fim?fmt(g.fim):"–"]].map(k=>`<div class="kpi ${k[2]||""}"><span>${k[0]}</span><b>${k[1]}</b></div>`).join("")+(g.miss?`<div class="kpi"><span>Serviços sem KM</span><b class="warn">${g.miss}</b></div>`:"")+`</div>
+  <h2>Descrição da folha</h2><div class="card desc">${esc(S.desc||"Sem descrição.")}</div><h2>Por funcionário</h2>`+Object.entries(G).map(([f,l])=>{const t=sum(l);return `<div class="card emp"><div style="display:flex;gap:12px;align-items:center"><div class="avatar">${esc(f.trim()[0]||"?")}</div><div><b>${esc(f)}</b><br><small>${l.length} serviço(s) · ${t.km.toFixed(1)} km · deslocação ${dur(t.v)} · serviços ${dur(t.s)} · intervalos ${dur(t.i)}</small></div></div><div style="text-align:right"><b>${t.fim?fmt(t.fim):"–"}</b><br><small>fim previsto · turno ${dur(t.turno)}</small></div></div>`}).join("");
+  $("#svcC").innerHTML=Object.entries(G).map(([f,l])=>{const t=sum(l);return `<section class="sec"><header><div><div class="avatar">${esc(f.trim()[0]||"?")}</div><h3>${esc(f)}</h3></div><small>${t.km.toFixed(1)} km · fim ${t.fim?fmt(t.fim):"–"}</small></header><div class="cards">`+l.map(r=>{const c=C.get(r.id);return `<article class="card item"><div class="top2"><div><b>${esc(r.inicio)}</b> ${esc(r.servico)}<div class="route">Para ${esc(r.cliente||"–")}</div></div><div><div class="endt">${c.falta?"–":fmt(c.fim)}</div><div class="route" style="text-align:right">fim previsto</div></div></div><div class="route">${esc(r.orig)} → ${esc(r.dest)}</div>`+(c.falta?`<div class="warn">Morada não reconhecida: indique os KM em «Corrigir» ou ligue a chave de rotas.</div>`:`<div class="strip"><i class="v" style="flex:${Math.max(c.viag,1)}"></i><i class="s" style="flex:${Math.max(c.serv,1)}"></i><i class="i" style="flex:${Math.max(num(r.intervalo),1)}"></i></div><div class="legend"><em style="--c:var(--acc)">Viagem ${c.viag} min · ${c.km.toFixed(1)} km</em><em style="--c:var(--srv)">Serviço ${Math.round(c.serv)} min</em><em style="--c:var(--amb)">Intervalo ${num(r.intervalo)} min</em></div><div class="route">Total ${dur(c.total)} · km ${c.f}</div>`)+`<button class="btn sm" data-e="${r.id}" style="align-self:flex-start">Corrigir</button></article>`}).join("")+`</div></section>`}).join("");
+  $("#tabC").innerHTML=`<div class="scroll"><table><thead><tr><th>Funcionário</th><th>Cliente</th><th>Serviço</th><th>Início</th><th>Duração + intervalo</th><th>Início → chegada</th><th>KM</th><th>Tempo total</th><th>Fim previsto</th><th></th></tr></thead><tbody>`+rows.map(r=>{const c=C.get(r.id);return `<tr><td>${esc(r.func)}</td><td>${esc(r.cliente)}</td><td>${esc(r.servico)}</td><td class="n">${esc(r.inicio)}</td><td class="n">${num(r.dmin)}–${num(r.dmax)} + ${num(r.intervalo)} min</td><td>${esc(r.orig)} → ${esc(r.dest)}</td><td class="n">${c.falta?'<span class="warn">indicar</span>':c.km.toFixed(1)+" km"}</td><td class="n">${c.falta?"–":dur(c.total)}</td><td class="n"><b>${c.falta?"–":fmt(c.fim)}</b></td><td><button class="btn sm" data-e="${r.id}">Corrigir</button></td></tr>`}).join("")+`</tbody></table></div>`;
+  S.last=rows.map(r=>({r,c:C.get(r.id)}))}
+
+/* ===================== FOTO ===================== */
+const msg=(t,e)=>{const m=$("#msg");m.textContent=t;m.className="msg"+(e?" err":"")};
+async function handle(f){if(!f)return;msg("");$("#busy").classList.add("on");
+  try{const j=await readAny(f);if(!j.servicos?.length)throw new Error("Não foram encontrados serviços. Tente uma foto mais nítida e bem enquadrada.");
+    S.desc=j.descricao||"";S.api={};S.rows=j.servicos.map(s=>mk({func:s.funcionario||"Sem nome",cliente:s.cliente,servico:s.servico,inicio:s.inicio||"09:00",dmin:s.duracaoMin,dmax:s.duracaoMax||s.duracaoMin,intervalo:s.intervalo,orig:s.origem,dest:s.destino}));
+    render();go("sum");fetchRoutes().then(render)}catch(x){msg(x.message||"Erro ao ler a imagem.",1)}
+  $("#busy").classList.remove("on")}
+for(const id of["cam","up","xl"])$("#"+id).onchange=e=>{const f=e.target.files[0];e.target.value="";handle(f)};
+document.querySelectorAll("label.btn").forEach(l=>l.onkeydown=e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();l.click()}});
+const sc=$("#scan");sc.ondragover=e=>{e.preventDefault();sc.classList.add("drag")};sc.ondragleave=()=>sc.classList.remove("drag");
+sc.ondrop=e=>{e.preventDefault();sc.classList.remove("drag");handle(e.dataTransfer.files[0])};
+
+/* ===================== CORRIGIR / DEFINIÇÕES ===================== */
+function edit(r){S.ed=r;const f=$("#frm").elements;for(const k of["func","cliente","servico","inicio","intervalo","orig","dest","dmin","dmax"])f[k].value=r[k]??"";f.km.value=r.km??"";$("#dlg").showModal()}
+$("#cancel").onclick=()=>$("#dlg").close();
+$("#del").onclick=()=>{S.rows=S.rows.filter(r=>r!==S.ed);$("#dlg").close();render()};
+$("#frm").onsubmit=()=>{const f=$("#frm").elements,r=S.ed;
+  Object.assign(r,{func:f.func.value.trim(),cliente:f.cliente.value,servico:f.servico.value,inicio:f.inicio.value,intervalo:num(f.intervalo.value),dmin:num(f.dmin.value),dmax:num(f.dmax.value)||num(f.dmin.value),orig:f.orig.value,dest:f.dest.value,km:f.km.value===""?null:num(f.km.value)});
+  render();fetchRoutes().then(render)};
+$("#perfil").onchange=()=>{$("#speed").value=SPEEDS[$("#perfil").value];render()};
+["speed","fator","modo"].forEach(i=>$("#"+i).oninput=render);
+const ks=keys();$("#fset").elements.ak.value=ks.ak||"";$("#fset").elements.ok.value=ks.ok||"";$("#fset").elements.gk.value=ks.gk||"";
+$("#fset").onsubmit=e=>{e.preventDefault();const f=$("#fset").elements;store.set("fs_keys",{ak:f.ak.value.trim(),ok:f.ok.value.trim(),gk:f.gk.value.trim()});S.api={};fetchRoutes().then(render)};
+$("#bPrint").onclick=()=>print();
+$("#bClr").onclick=()=>{S.rows=[];S.desc="";S.api={};render();go("home")};
+$("#bCsv").onclick=()=>{if(!S.last.length)return;const q=v=>'"'+String(v??"").replace(/"/g,'""')+'"';
+  const L=[["Funcionário","Cliente","Serviço","Início","Duração mín","Duração máx","Intervalo","Origem","Destino","KM","Tempo total (min)","Fim previsto"].map(q).join(";")].concat(S.last.map(({r,c})=>[r.func,r.cliente,r.servico,r.inicio,r.dmin,r.dmax,r.intervalo,r.orig,r.dest,c.falta?"":c.km.toFixed(1),c.falta?"":c.total,c.falta?"":fmt(c.fim)].map(q).join(";")));
+  const a=document.createElement("a");a.href=URL.createObjectURL(new Blob(["\ufeff"+L.join("\n")],{type:"text/csv"}));a.download="folha-de-servico.csv";a.click()};
+
+/* ===================== EXCEL / CSV ===================== */
+function csvRows(t){const d=(t.split("\n")[0].match(/;/g)||[]).length>=(t.split("\n")[0].match(/,/g)||[]).length?";":",";const o=[];let r=[],c="",q=0;
+  for(let i=0;i<t.length;i++){const x=t[i];if(q){if(x=='"'&&t[i+1]=='"'){c+='"';i++}else if(x=='"')q=0;else c+=x}else if(x=='"')q=1;else if(x==d){r.push(c);c=""}else if(x=="\n"||x=="\r"){if(x=="\r"&&t[i+1]=="\n")i++;r.push(c);c="";if(r.some(v=>v.trim()))o.push(r);r=[]}else c+=x}
+  r.push(c);if(r.some(v=>v.trim()))o.push(r);return o}
+async function sheetText(f){if(/\.csv$/i.test(f.name))return f.text();
+  if(!window.XLSX)await new Promise((ok,ko)=>{const s=document.createElement("script");s.src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js";s.onload=ok;s.onerror=()=>ko(new Error("Não foi possível carregar o leitor de Excel (precisa de internet)."));document.head.appendChild(s)});
+  const wb=XLSX.read(await f.arrayBuffer());return XLSX.utils.sheet_to_csv(wb.Sheets[wb.SheetNames[0]],{FS:";"})}
+function fromTable(t){const R=csvRows(t);if(R.length<2)return[];const H=R[0].map(norm);
+  const ex=(...n)=>n.find(i=>i>=0)??-1;const col=(...k)=>H.findIndex(h=>k.some(x=>h.includes(x)));
+  const I={func:col("funcion","colabor","tecnic","motorista","nome"),cli:col("client","pessoa"),srv:col("servic","tarefa"),ini:col("inicio","hora"),dmin:col("min","duracao"),dmax:col("max"),itv:col("interval"),o:ex(col("origem","partida","morada de inicio"),H.indexOf("de")),d:ex(col("destino","chegada","morada de chegada"),H.indexOf("ate"),H.indexOf("para"))};
+  if(I.o<0||I.d<0)return[];const g=(r,i)=>i>=0?(r[i]||"").trim():"";
+  return R.slice(1).map(r=>({funcionario:g(r,I.func),cliente:g(r,I.cli),servico:g(r,I.srv),inicio:g(r,I.ini).slice(0,5)||"09:00",duracaoMin:num(g(r,I.dmin)),duracaoMax:num(g(r,I.dmax))||num(g(r,I.dmin)),intervalo:num(g(r,I.itv)),origem:g(r,I.o),destino:g(r,I.d)})).filter(s=>s.origem&&s.destino)}
+async function aiText(t){const P=PROMPT.replace("esta fotografia de uma folha","esta folha")+"\n\nFOLHA:\n"+t.slice(0,20000);
+  const sm=window.claude?await window.claude.use("sample"):null;if(sm)return parse((await sm(P,{cache:false})).text);
+  const K=keys().ak;if(!K)throw new Error("Colunas não reconhecidas. Use colunas Origem e Destino ou indique a chave Anthropic em Definições.");
+  const r=await fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:{"content-type":"application/json","x-api-key":K,"anthropic-version":"2023-06-01","anthropic-dangerous-direct-browser-access":"true"},body:JSON.stringify({model:CONFIG.VISION_MODEL,max_tokens:2500,messages:[{role:"user",content:P}]})});
+  const j=await r.json();if(!r.ok)throw new Error(j.error?.message||"Erro na API.");return parse(j.content.map(c=>c.text||"").join(""))}
+async function readAny(f){if(/\.(csv|xlsx|xls)$/i.test(f.name)){const t=await sheetText(f),s=fromTable(t);return s.length?{descricao:"Importado de "+f.name+" ("+s.length+" serviços).",servicos:s}:aiText(t)}return readSheet(f)}
+
+/* ===================== MAPA (Google Maps) ===================== */
+let gmP=null;
+function loadMaps(){if(window.google?.maps)return Promise.resolve();if(gmP)return gmP;const k=keys().gk;if(!k)return Promise.reject(new Error("Indique a chave Google Maps em Definições para ver o mapa."));
+  return gmP=new Promise((ok,ko)=>{window.__gm=ok;const s=document.createElement("script");s.src="https://maps.googleapis.com/maps/api/js?key="+encodeURIComponent(k)+"&callback=__gm&loading=async&language=pt-PT&region=PT";s.onerror=()=>{gmP=null;ko(new Error("Não foi possível carregar o Google Maps."))};document.head.appendChild(s)})}
+let gMap,gRend;
+async function drawMap(){const sel=$("#mapSel"),info=$("#mapInfo");
+  if(!S.rows.length){sel.innerHTML="";$("#mapBox").style.display="none";info.textContent="Carregue primeiro uma folha de serviços.";return}
+  const cur=sel.value;sel.innerHTML=S.rows.map(r=>`<option value="${r.id}">${esc(r.inicio)} · ${esc(r.func)} · ${esc(r.servico||r.cliente||"serviço")}</option>`).join("");if(cur)sel.value=cur;
+  sel.onchange=drawMap;const r=S.rows.find(x=>x.id===sel.value)||S.rows[0];
+  try{await loadMaps();$("#mapBox").style.display="";info.textContent="A calcular rota…";
+    const {Map}=await google.maps.importLibrary("maps"),{DirectionsService,DirectionsRenderer}=await google.maps.importLibrary("routes");
+    gMap??=new Map($("#mapBox"),{center:{lat:39.5,lng:-8},zoom:6,mapTypeControl:false,streetViewControl:false});gRend??=new DirectionsRenderer({map:gMap,polylineOptions:{strokeColor:"#0b63d6",strokeWeight:6}});
+    const res=await new DirectionsService().route({origin:r.orig,destination:r.dest,travelMode:"DRIVING"});gRend.setDirections(res);
+    const l=res.routes[0].legs[0];info.textContent=`${r.orig} → ${r.dest}: ${(l.distance.value/1000).toFixed(1)} km · ${l.duration.text}`}
+  catch(e){$("#mapBox").style.display="none";info.textContent=e.message||"Não foi possível desenhar a rota (verifique a chave e as APIs ativas)."}}
+
+/* ===================== INSTALAR (PWA) ===================== */
+let dip=null;addEventListener("beforeinstallprompt",e=>{e.preventDefault();dip=e;$("#bInst").style.display=""});
+$("#bInst").onclick=async()=>{if(!dip)return;dip.prompt();await dip.userChoice;dip=null;$("#bInst").style.display="none"};
+
+/* ===================== CONTAS (guardadas neste dispositivo) ===================== */
+const RU="rr_users",RS="rr_session",lsj=(k,d)=>{try{return JSON.parse(localStorage.getItem(k))??d}catch(e){return d}};
+const hex=b=>[...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,"0")).join(""),rnd=n=>hex(crypto.getRandomValues(new Uint8Array(n)));
+async function pbk(pw,salt){const k=await crypto.subtle.importKey("raw",new TextEncoder().encode(pw),"PBKDF2",false,["deriveBits"]);return hex(await crypto.subtle.deriveBits({name:"PBKDF2",hash:"SHA-256",salt:new TextEncoder().encode(salt),iterations:150000},k,256))}
+const mkCode=()=>{const a="ABCDEFGHJKLMNPQRSTUVWXYZ23456789";return"RR-"+[0,1,2].map(()=>[...crypto.getRandomValues(new Uint8Array(4))].map(x=>a[x%a.length]).join("")).join("-")};
+const aMsg=(t,ok)=>{const m=$("#aMsg");m.textContent=t||"";m.className="am"+(ok?" ok":"")};
+function aTab(t){document.querySelectorAll(".af").forEach(f=>f.classList.toggle("on",f.dataset.f===t));document.querySelectorAll(".atabs button").forEach(b=>b.classList.toggle("on",b.dataset.tab===t));$("#aTabs").style.display=(t==="rec"||t==="code")?"none":"";aMsg("")}
+$("#auth").addEventListener("click",e=>{const a=e.target.closest("[data-tab]");if(a){e.preventDefault();aTab(a.dataset.tab)}});
+const em=v=>v.trim().toLowerCase(),fd=f=>Object.fromEntries(new FormData(f));
+function showCode(code,u){$("#codeV").textContent=code;aTab("code");$("#codeCopy").onclick=()=>navigator.clipboard?.writeText(code).then(()=>aMsg("Chave copiada.",1));$("#codeOk").onclick=()=>{localStorage.setItem(RS,u.email);enter(u)}}
+const guard=fn=>async e=>{e.preventDefault();aMsg("");try{if(!crypto?.subtle)throw new Error("Abra a app por HTTPS para criar contas.");await fn(fd(e.target),e.target)}catch(x){aMsg(x.message||"Erro inesperado.")}};
+$("#fUp").onsubmit=guard(async d=>{const U_=lsj(RU,{}),e=em(d.e);if(d.p.length<8)throw new Error("A senha precisa de pelo menos 8 caracteres.");if(d.p!==d.q)throw new Error("As senhas não coincidem.");if(U_[e])throw new Error("Já existe uma conta com este email.");
+  const salt=rnd(16),rsalt=rnd(16),code=mkCode(),u={name:d.n.trim(),email:e,salt,hash:await pbk(d.p,salt),rsalt,rhash:await pbk(code,rsalt)};U_[e]=u;localStorage.setItem(RU,JSON.stringify(U_));showCode(code,u)});
+$("#fIn").onsubmit=guard(async d=>{const u=lsj(RU,{})[em(d.e)];if(!u||await pbk(d.p,u.salt)!==u.hash)throw new Error("Email ou senha incorretos.");localStorage.setItem(RS,u.email);enter(u)});
+$("#fRec").onsubmit=guard(async d=>{const U_=lsj(RU,{}),u=U_[em(d.e)];if(!u||await pbk(d.c.trim().toUpperCase(),u.rsalt)!==u.rhash)throw new Error("Email ou chave de recuperação incorretos.");if(d.p.length<8)throw new Error("A senha precisa de pelo menos 8 caracteres.");
+  const code=mkCode();u.salt=rnd(16);u.hash=await pbk(d.p,u.salt);u.rsalt=rnd(16);u.rhash=await pbk(code,u.rsalt);U_[u.email]=u;localStorage.setItem(RU,JSON.stringify(U_));showCode(code,u)});
+$("#bOut").onclick=()=>{localStorage.removeItem(RS);location.reload()};
+["perfil","speed","fator","modo"].forEach(i=>$("#"+i).addEventListener("change",saveCfg));
+$("#hl").innerHTML=LOGO(30);$("#alogo").innerHTML=LOGO(72);
+function enter(u){U.p="u:"+u.email+":";document.body.classList.remove("noauth");$("#uName").textContent=u.name;$("#uMail").textContent=u.email;S.api={};S.rows=[];S.desc="";
+  const c=store.get("fs_cfg")||{};["perfil","speed","fator","modo"].forEach(i=>{if(c[i]!=null)$("#"+i).value=c[i]});
+  const f=$("#fset").elements,k=store.get("fs_keys")||{};f.ak.value=k.ak||"";f.gk.value=k.gk||"";f.ok.value=k.ok||"";
+  const sv=store.get("fs_data");if(sv?.rows?.length){S.desc=sv.desc;S.rows=sv.rows}aTab("in");go("home");render()}
+
+/* ===================== ANIMAÇÕES ===================== */
+const calm=matchMedia("(prefers-reduced-motion: reduce)").matches;
+function countUp(el){if(calm||el.dataset.cu)return;el.dataset.cu=1;const t=el.textContent,st=performance.now();(function f(n){const k=Math.min(1,(n-st)/900),e=1-Math.pow(1-k,3);el.textContent=t.replace(/\d+(?:\.\d+)?/g,s=>{const d=(s.split(".")[1]||"").length,v=(parseFloat(s)*e).toFixed(d);return !d&&s.length>v.length?v.padStart(s.length,"0"):v});if(k<1)requestAnimationFrame(f)})(st)}
+function stg(root){if(!root)return;let i=0;root.querySelectorAll(".card,.kpi,tbody tr").forEach(el=>{if(el.classList.contains("rv"))return;el.style.animationDelay=Math.min(i++*60,700)+"ms";el.classList.add("rv")});root.querySelectorAll(".kpi b").forEach(countUp)}
+let obq=0;new MutationObserver(()=>{cancelAnimationFrame(obq);obq=requestAnimationFrame(()=>stg(document.querySelector(".view.on")))}).observe($("main"),{childList:true,subtree:true});
+document.addEventListener("click",e=>{const b=e.target.closest(".btn,.atabs button,nav button");if(!b||calm)return;const r=b.getBoundingClientRect(),d=Math.max(r.width,r.height),s=document.createElement("span");s.className="rip";s.style.cssText=`width:${d}px;height:${d}px;left:${e.clientX-r.left-d/2}px;top:${e.clientY-r.top-d/2}px`;b.appendChild(s);setTimeout(()=>s.remove(),650)});
+{const us=lsj(RU,{}),s=localStorage.getItem(RS);if(s&&us[s])enter(us[s])}
+
+if("serviceWorker"in navigator&&location.protocol.startsWith("http"))navigator.serviceWorker.register("sw.js").catch(()=>{});
+</script>
+</body></html>

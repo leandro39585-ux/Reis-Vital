@@ -1,0 +1,11 @@
+REISROTA - Gestão de serviços de transporte (PWA para PC, Android, iPhone/iPad)
+
+SECÇÕES (menu de 3 traços): Início · Resumo · Serviços · Mapa · Tabela · Definições.
+CONTAS: criar conta, entrar e recuperar senha com chave de recuperação (mostrada uma vez ao criar a conta).
+Tudo o que se altera fica guardado automaticamente na conta (folha, definições e chaves).
+IMPORTANTE: nesta versão as contas e os dados ficam guardados NO DISPOSITIVO/NAVEGADOR. Para contas partilhadas entre dispositivos e recuperação por email é preciso ligar um servidor (ex.: Supabase ou Firebase).
+
+CARREGAR FOLHA: foto, Excel ou CSV (colunas: Funcionário, Cliente, Serviço, Início, Duração mín/máx, Intervalo, Origem, Destino).
+GOOGLE MAPS: Definições > Chave Google Maps. Ativar no Google Cloud: Routes API, Maps JavaScript API e Directions API; restringir a chave ao domínio.
+LEITURA DE FOTO: chave Anthropic em Definições.
+INSTALAR: alojar em HTTPS (Netlify, Vercel, GitHub Pages) e usar "Instalar" em Definições (iPhone: Partilhar > Adicionar ao ecrã principal).
